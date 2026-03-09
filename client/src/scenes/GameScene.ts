@@ -4,6 +4,7 @@ import {
   NET_X, NET_Y, COURT_FLOOR, P1_MIN_X, P1_MAX_X, P2_MIN_X, P2_MAX_X,
   SERVE_HEIGHT, SERVE_RESET_DELAY, AI_DELAY_EASY, AI_DELAY_MEDIUM, AI_DELAY_HARD,
   AI_SIGNATURE_STAMINA_HARD, AI_POWER_STAMINA_MEDIUM, BALL_GRAVITY,
+  RACKET_RANGE, SWING_ZONE_ABOVE, SWING_ZONE_BELOW,
 } from '@shared/constants';
 import { Ball } from '../entities/Ball';
 import { Player } from '../entities/Player';
@@ -79,6 +80,15 @@ export class GameScene extends Phaser.Scene {
   private practiceHitStreak: number = 0;
   private practiceStreakText!: Phaser.GameObjects.Text;
 
+  // P1 auto-hit cooldown (prevents re-triggering every frame)
+  private p1AutoHitCooldown: number = 0;
+
+  // P1 power-up timer (F key) — 0 = ready
+  private p1PowerTimer: number = 0;
+  private readonly P1_POWER_COOLDOWN = 10.0; // seconds between uses
+  private p1PowerReadyGfx!: Phaser.GameObjects.Graphics;
+  private p1PowerTimerText!: Phaser.GameObjects.Text;
+
   // P1 charge tracking
   private p1ChargeStarted: boolean = false;
 
@@ -120,6 +130,17 @@ export class GameScene extends Phaser.Scene {
     // Phantom clone graphics
     this.phantomBallGfx = this.add.graphics();
     this.phantomBallGfx.setDepth(9);
+
+    // P1 power indicator (above player, below HUD)
+    this.p1PowerReadyGfx = this.add.graphics();
+    this.p1PowerReadyGfx.setDepth(20);
+    this.p1PowerTimerText = this.add.text(0, 0, '', {
+      fontFamily: '"Press Start 2P", monospace',
+      fontSize: '5px',
+      color: '#ffff00',
+      stroke: '#000000',
+      strokeThickness: 2,
+    }).setResolution(4).setDepth(21).setOrigin(0.5, 1);
 
     // Scanlines
     this.scanlineGraphics = this.add.graphics();
@@ -213,6 +234,17 @@ export class GameScene extends Phaser.Scene {
         if (wasCharging && this.p1.chargeTimer >= 1.0) {
           this.doSwing(this.p1, 'signature', 'p1');
         }
+      }
+    });
+
+    // P1 power-up (F key — timer-based signature)
+    this.input.keyboard!.on('keydown-F', () => {
+      if (this.phase !== 'playing') return;
+      if (this.p1PowerTimer <= 0) {
+        this.p1.stamina = 100; // guarantee enough stamina
+        this.doSwing(this.p1, 'signature', 'p1');
+        this.p1PowerTimer = this.P1_POWER_COOLDOWN;
+        this.p1AutoHitCooldown = 0.4;
       }
     });
 
@@ -396,6 +428,10 @@ export class GameScene extends Phaser.Scene {
     updateHitFreeze(this);
     updateSlowMo(this, delta);
 
+    // Tick timers
+    if (this.p1AutoHitCooldown > 0) this.p1AutoHitCooldown -= dt;
+    if (this.p1PowerTimer > 0) this.p1PowerTimer -= dt;
+
     if (this.phase === 'point_pause') {
       this.pointPauseTimer -= dt;
       if (this.pointPauseTimer <= 0) {
@@ -490,13 +526,52 @@ export class GameScene extends Phaser.Scene {
     // Charge tracking for L key
     if (this.p1ChargeStarted) {
       if (this.p1.updateCharge(dt)) {
-        // Charge ready — visual feedback
         if (!this.p1.signatureActive) {
           this.p1.graphics.setAlpha(0.8 + Math.sin(Date.now() * 0.01) * 0.2);
         }
       }
     } else {
       this.p1.graphics.setAlpha(1);
+    }
+
+    // Auto-hit: swing automatically when ball enters racket range
+    if (this.phase === 'playing' && this.ball.inPlay && this.p1AutoHitCooldown <= 0) {
+      const dx = Math.abs(this.p1.x - this.ball.x);
+      const dy = this.ball.y - this.p1.y;
+      if (dx <= RACKET_RANGE && dy >= -SWING_ZONE_ABOVE && dy <= SWING_ZONE_BELOW) {
+        this.doSwing(this.p1, 'flat', 'p1');
+        this.p1AutoHitCooldown = 0.4;
+      }
+    }
+
+    // Power indicator
+    this.drawP1PowerIndicator();
+  }
+
+  private drawP1PowerIndicator(): void {
+    this.p1PowerReadyGfx.clear();
+    const px = this.p1.x;
+    const py = this.p1.y - 38;
+    const ready = this.p1PowerTimer <= 0;
+
+    if (ready) {
+      // Pulsing yellow "F" indicator
+      const pulse = Math.sin(Date.now() * 0.008) * 0.3 + 0.7;
+      this.p1PowerReadyGfx.fillStyle(0xffff00, pulse);
+      this.p1PowerReadyGfx.fillRect(px - 8, py - 5, 16, 7);
+      this.p1PowerTimerText.setText('POWER!');
+      this.p1PowerTimerText.setPosition(px, py - 5);
+      this.p1PowerTimerText.setColor('#000000');
+    } else {
+      // Cooldown bar
+      const pct = 1 - this.p1PowerTimer / this.P1_POWER_COOLDOWN;
+      this.p1PowerReadyGfx.fillStyle(0x333333, 0.8);
+      this.p1PowerReadyGfx.fillRect(px - 10, py, 20, 3);
+      this.p1PowerReadyGfx.fillStyle(0x00aaff, 1);
+      this.p1PowerReadyGfx.fillRect(px - 10, py, Math.floor(20 * pct), 3);
+      this.p1PowerTimerText.setText(`F:${Math.ceil(this.p1PowerTimer)}s`);
+      this.p1PowerTimerText.setPosition(px, py - 1);
+      this.p1PowerTimerText.setColor('#aaaaaa');
     }
   }
 

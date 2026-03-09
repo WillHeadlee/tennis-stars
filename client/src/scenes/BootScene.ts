@@ -12,34 +12,22 @@ export class BootScene extends Phaser.Scene {
   preload(): void {
     this.drawLoadingScreen();
 
-    // Since we use procedural graphics, there are no external assets to load.
-    // Simulate a brief loading period for the font to arrive via Google Fonts.
-    // We create a fake progress to show the bar.
     this.load.on('progress', (value: number) => {
       this.updateLoadingBar(value);
     });
 
-    // Load the Google Font by adding a CSS link (already in HTML, but ensure it)
-    // We'll use a canvas font test to confirm it's ready.
+    // Character portrait sprites
+    this.load.image('ace-nobg',     'assets/ace-nobg.png');
+    this.load.image('crusher-nobg', 'assets/crusher-nobg.png');
+    this.load.image('phantom-nobg', 'assets/phantom-nobg.png');
+    this.load.image('rally-nobg',   'assets/rally-nobg.png');
   }
 
   create(): void {
-    // Animate loading bar to full, then transition
-    this.tweens.add({
-      targets: { value: 0 },
-      value: 1,
-      duration: 800,
-      ease: 'Linear',
-      onUpdate: (tween) => {
-        this.updateLoadingBar(tween.progress);
-      },
-      onComplete: () => {
-        // Flash screen
-        this.cameras.main.flash(300, 255, 255, 255);
-        this.time.delayedCall(600, () => {
-          this.scene.start('MenuScene');
-        });
-      },
+    this.updateLoadingBar(1);
+    this.cameras.main.flash(300, 255, 255, 255);
+    this.time.delayedCall(600, () => {
+      this.scene.start('MenuScene');
     });
   }
 

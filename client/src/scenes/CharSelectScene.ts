@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { CharacterId, CourtId, GameMode, AIDifficulty } from '@shared/types';
-import { CHARACTERS, CHARACTER_ORDER, drawCharacterSprite } from '../data/characters';
+import { CHARACTERS, CHARACTER_ORDER } from '../data/characters';
 import { COURTS, COURT_ORDER } from '../data/courts';
 
 interface CharSelectData {
@@ -21,9 +21,7 @@ export class CharSelectScene extends Phaser.Scene {
 
   private p1CursorGfx!: Phaser.GameObjects.Graphics;
   private p2CursorGfx!: Phaser.GameObjects.Graphics;
-  private charPreviewGfx: Phaser.GameObjects.Graphics[] = [];
-  private animFrame: number = 0;
-  private animTimer: number = 0;
+  private charPreviewImages: Phaser.GameObjects.Image[] = [];
   private charInfoTexts: Phaser.GameObjects.Text[] = [];
 
   private readonly difficulties: AIDifficulty[] = ['easy', 'medium', 'hard'];
@@ -104,12 +102,11 @@ export class CharSelectScene extends Phaser.Scene {
       slotBg.strokeRect(sx, y, 60, 90);
       slotBg.setDepth(5);
 
-      // Character preview sprite
-      const preview = this.add.graphics();
-      preview.setName(`char_preview_${i}`);
-      preview.setDepth(6);
-      this.charPreviewGfx.push(preview);
-      this.redrawCharPreview(i);
+      // Character portrait image — centered in the top portion of the slot
+      const img = this.add.image(sx + 30, y + 28, `${charId}-nobg`);
+      img.setDisplaySize(54, 54);
+      img.setDepth(6);
+      this.charPreviewImages.push(img);
 
       // Character name
       const nameText = this.add.text(sx + 30, y + 60, char.name, {
@@ -143,20 +140,6 @@ export class CharSelectScene extends Phaser.Scene {
     const c = CHARACTERS[charId];
     const star = (n: number) => '★'.repeat(n) + '☆'.repeat(5 - n);
     return `SPD ${star(c.speed)}\nPWR ${star(c.power)}\nSTM ${star(c.staminaRegen)}`;
-  }
-
-  private redrawCharPreview(index: number): void {
-    const charId = CHARACTER_ORDER[index];
-    const slotWidth = 70;
-    const startX = 15;
-    const sx = startX + index * slotWidth;
-
-    const gfx = this.charPreviewGfx[index];
-    if (!gfx) return;
-    gfx.clear();
-    gfx.setPosition(sx + 30, 65);
-
-    drawCharacterSprite(gfx, charId, this.animFrame, true, true);
   }
 
   private drawCourtSelector(): void {
@@ -405,17 +388,5 @@ export class CharSelectScene extends Phaser.Scene {
     }
   }
 
-  update(_time: number, delta: number): void {
-    const dt = delta / 1000;
-    this.animTimer += dt;
-    if (this.animTimer >= 0.12) {
-      this.animTimer = 0;
-      this.animFrame = (this.animFrame + 1) % 8;
-
-      // Redraw all character previews
-      for (let i = 0; i < CHARACTER_ORDER.length; i++) {
-        this.redrawCharPreview(i);
-      }
-    }
-  }
+  update(): void {}
 }

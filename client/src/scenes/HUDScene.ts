@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { CharacterId } from '@shared/types';
 import { STAMINA_MAX } from '@shared/constants';
-import { CHARACTERS, drawCharacterPortrait } from '../data/characters';
+import { CHARACTERS } from '../data/characters';
 import { TennisScore, pointsToDisplay } from '../utils/scoring';
 
 interface HUDSceneData {
@@ -25,8 +25,8 @@ export class HUDScene extends Phaser.Scene {
   private tiebreakText!: Phaser.GameObjects.Text;
   private p1StaminaBar!: Phaser.GameObjects.Graphics;
   private p2StaminaBar!: Phaser.GameObjects.Graphics;
-  private p1PortraitGfx!: Phaser.GameObjects.Graphics;
-  private p2PortraitGfx!: Phaser.GameObjects.Graphics;
+  private p1PortraitImg!: Phaser.GameObjects.Image;
+  private p2PortraitImg!: Phaser.GameObjects.Image;
   private staminaPulseTimer: number = 0;
   private p1PortraitFlashTimer: number = 0;
   private p2PortraitFlashTimer: number = 0;
@@ -94,17 +94,17 @@ export class HUDScene extends Phaser.Scene {
   }
 
   private drawPortraits(): void {
-    // P1 portrait (left)
-    this.p1PortraitGfx = this.add.graphics();
-    this.p1PortraitGfx.setDepth(5);
-    drawCharacterPortrait(this.p1PortraitGfx, this.p1CharId);
-    this.p1PortraitGfx.setPosition(2, 2);
+    // P1 portrait (left) — 18px square fits within 22px HUD bar
+    this.p1PortraitImg = this.add.image(2, 2, `${this.p1CharId}-nobg`);
+    this.p1PortraitImg.setOrigin(0, 0);
+    this.p1PortraitImg.setDisplaySize(18, 18);
+    this.p1PortraitImg.setDepth(5);
 
-    // P2 portrait (right)
-    this.p2PortraitGfx = this.add.graphics();
-    this.p2PortraitGfx.setDepth(5);
-    drawCharacterPortrait(this.p2PortraitGfx, this.p2CharId);
-    this.p2PortraitGfx.setPosition(302, 2);
+    // P2 portrait (right) — right-aligned at x=318
+    this.p2PortraitImg = this.add.image(318, 2, `${this.p2CharId}-nobg`);
+    this.p2PortraitImg.setOrigin(1, 0);
+    this.p2PortraitImg.setDisplaySize(18, 18);
+    this.p2PortraitImg.setDepth(5);
   }
 
   private createScoreDisplay(): void {
@@ -295,16 +295,16 @@ export class HUDScene extends Phaser.Scene {
     // Portrait flash effect
     if (this.p1PortraitFlashTimer > 0) {
       const flashAlpha = Math.sin(this.p1PortraitFlashTimer * 15) > 0 ? 1 : 0.3;
-      this.p1PortraitGfx.setAlpha(flashAlpha);
+      this.p1PortraitImg.setAlpha(flashAlpha);
     } else {
-      this.p1PortraitGfx.setAlpha(1);
+      this.p1PortraitImg.setAlpha(1);
     }
 
     if (this.p2PortraitFlashTimer > 0) {
       const flashAlpha = Math.sin(this.p2PortraitFlashTimer * 15) > 0 ? 1 : 0.3;
-      this.p2PortraitGfx.setAlpha(flashAlpha);
+      this.p2PortraitImg.setAlpha(flashAlpha);
     } else {
-      this.p2PortraitGfx.setAlpha(1);
+      this.p2PortraitImg.setAlpha(1);
     }
   }
 

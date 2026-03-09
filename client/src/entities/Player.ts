@@ -95,7 +95,7 @@ export class Player {
 
     this.bodyImage = scene.add.image(x, y, `${characterId}-nobg`);
     this.bodyImage.setOrigin(0.5, 1); // anchor at bottom-center (feet)
-    this.bodyImage.setDisplaySize(20, 30);
+    this.bodyImage.setDisplaySize(26, 26); // ~1:1 after transparent-margin crop
     this.bodyImage.setDepth(5 + (isP2 ? 1 : 0));
 
     this.graphics = scene.add.graphics();

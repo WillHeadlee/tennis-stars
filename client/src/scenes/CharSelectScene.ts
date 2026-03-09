@@ -138,12 +138,12 @@ export class CharSelectScene extends Phaser.Scene {
 
   private buildStatsString(charId: CharacterId): string {
     const c = CHARACTERS[charId];
-    const star = (n: number) => '★'.repeat(n) + '☆'.repeat(5 - n);
-    return `SPD ${star(c.speed)}\nPWR ${star(c.power)}\nSTM ${star(c.staminaRegen)}`;
+    const bar = (n: number) => '*'.repeat(n) + '.'.repeat(5 - n);
+    return `SPD ${bar(c.speed)}\nPWR ${bar(c.power)}\nSTM ${bar(c.staminaRegen)}`;
   }
 
   private drawCourtSelector(): void {
-    const y = 130;
+    const y = 122;
     this.add.text(160, y, 'COURT:', {
       fontFamily: '"Press Start 2P", monospace',
       fontSize: '6px',
@@ -151,7 +151,7 @@ export class CharSelectScene extends Phaser.Scene {
     }).setResolution(4).setOrigin(0.5, 0).setDepth(10);
 
     const court = COURTS[COURT_ORDER[this.courtIndex]];
-    const courtNameText = this.add.text(160, y + 12, court.name, {
+    const courtNameText = this.add.text(160, y + 11, court.name, {
       fontFamily: '"Press Start 2P", monospace',
       fontSize: '6px',
       color: '#ffffff',
@@ -161,7 +161,7 @@ export class CharSelectScene extends Phaser.Scene {
     courtNameText.setDepth(10);
 
     // Arrows
-    const leftArrow = this.add.text(100, y + 11, '<', {
+    const leftArrow = this.add.text(95, y + 10, '<', {
       fontFamily: '"Press Start 2P", monospace',
       fontSize: '8px',
       color: '#29adff',
@@ -169,7 +169,7 @@ export class CharSelectScene extends Phaser.Scene {
     leftArrow.setInteractive({ useHandCursor: true });
     leftArrow.on('pointerdown', () => this.changeCourt(-1));
 
-    const rightArrow = this.add.text(210, y + 11, '>', {
+    const rightArrow = this.add.text(215, y + 10, '>', {
       fontFamily: '"Press Start 2P", monospace',
       fontSize: '8px',
       color: '#29adff',
@@ -179,7 +179,7 @@ export class CharSelectScene extends Phaser.Scene {
   }
 
   private drawDifficultySelector(): void {
-    const y = 145;
+    const y = 148;
     this.add.text(160, y, 'DIFFICULTY:', {
       fontFamily: '"Press Start 2P", monospace',
       fontSize: '6px',
@@ -192,7 +192,7 @@ export class CharSelectScene extends Phaser.Scene {
       hard: '#ff0000',
     };
 
-    const diffText = this.add.text(160, y + 12, this.difficulties[this.difficultyIndex].toUpperCase(), {
+    const diffText = this.add.text(160, y + 11, this.difficulties[this.difficultyIndex].toUpperCase(), {
       fontFamily: '"Press Start 2P", monospace',
       fontSize: '6px',
       color: diffColors[this.difficulties[this.difficultyIndex]],
@@ -206,16 +206,16 @@ export class CharSelectScene extends Phaser.Scene {
     const isLocal = this.mode === 'local';
 
     if (isLocal) {
-      this.add.text(160, 170, 'P1: A/D+J  P2: ←/→+NUM1  ENTER: CONFIRM', {
+      this.add.text(160, 174, 'P1:A/D+J  P2:ARROWS+NUM1  J/NUM1:CONFIRM', {
         fontFamily: '"Press Start 2P", monospace',
-        fontSize: '5px',
-        color: '#6666aa',
+        fontSize: '4px',
+        color: '#7777bb',
       }).setResolution(4).setOrigin(0.5, 0.5).setDepth(10);
     } else {
-      this.add.text(160, 170, 'A/D: SELECT   ENTER: CONFIRM   ESC: BACK', {
+      this.add.text(160, 174, 'A/D: SELECT    ENTER: CONFIRM    ESC: BACK', {
         fontFamily: '"Press Start 2P", monospace',
-        fontSize: '5px',
-        color: '#6666aa',
+        fontSize: '4px',
+        color: '#7777bb',
       }).setResolution(4).setOrigin(0.5, 0.5).setDepth(10);
     }
   }

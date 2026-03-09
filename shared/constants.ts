@@ -1,7 +1,8 @@
 // Tennis Stars — Shared Constants
 // Used by both client (Phaser) and server (Colyseus)
 
-export const GRAVITY = 1200;          // px/s² at native resolution
+export const GRAVITY = 1200;          // px/s² — player gravity only
+export const BALL_GRAVITY = 400;      // px/s² — ball gravity (lower for playable arcs)
 export const BOUNCE_Y = 0.65;        // Vertical velocity retained on bounce
 export const BOUNCE_X = 0.90;        // Horizontal velocity retained on bounce
 

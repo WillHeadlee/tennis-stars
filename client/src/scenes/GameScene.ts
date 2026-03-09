@@ -439,11 +439,13 @@ export class GameScene extends Phaser.Scene {
       // Handle ball physics results
       if (ballResult === 'floor' && this.ball.inPlay) {
         this.handleBallBounce();
-      } else if (ballResult === 'out_left') {
-        // Ball went out on P1 side — P2 wins (unless served by P2 without crossing net)
-        if (this.ball.inPlay) this.awardPointTo('p2', 'out');
-      } else if (ballResult === 'out_right') {
-        if (this.ball.inPlay) this.awardPointTo('p1', 'out');
+      } else if (ballResult === 'out_left' || ballResult === 'out_right') {
+        // Whoever last hit the ball sent it out — their opponent wins
+        if (this.ball.inPlay) {
+          const loser = this.ball.lastHitBy as 'p1' | 'p2' | '';
+          if (loser === 'p1') this.awardPointTo('p2', 'out');
+          else if (loser === 'p2') this.awardPointTo('p1', 'out');
+        }
       } else if (ballResult === 'net_blocked') {
         // Net fault — award point to opposite of last hitter
         const lastHit = this.ball.lastHitBy;

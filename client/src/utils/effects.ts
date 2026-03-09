@@ -21,41 +21,44 @@ let originalTimeScale = 1;
 
 /**
  * Trigger a camera screenshake.
+ * amount is in native pixels (320px wide canvas).
  */
 export function triggerScreenshake(scene: Phaser.Scene, amount: number = SCREENSHAKE_AMOUNT, frames: number = SCREENSHAKE_FRAMES): void {
-  scene.cameras.main.shake(frames * (1000 / 60), amount);
+  // Convert pixel amount to viewport fraction (Phaser uses 0–1 range)
+  const intensity = amount / 320;
+  scene.cameras.main.shake(frames * (1000 / 60), intensity);
 }
 
 /**
- * Trigger a hit freeze (pause physics briefly).
- * Call update() each frame to handle countdown.
+ * Trigger a hit freeze (visual stutter — no-op for Phaser physics since
+ * this game uses custom physics; freeze is tracked via freezeFrames and
+ * checked in GameScene.update before advancing game logic).
  */
-export function triggerHitFreeze(scene: Phaser.Scene, frames: number = HIT_FREEZE_FRAMES): void {
+export function triggerHitFreeze(_scene: Phaser.Scene, frames: number = HIT_FREEZE_FRAMES): void {
   freezeFrames = frames;
-  // Pause the physics world briefly
-  scene.physics.world.isPaused = true;
 }
 
 /**
  * Update freeze countdown — call in scene update.
  * Returns true if still frozen.
  */
-export function updateHitFreeze(scene: Phaser.Scene): boolean {
+export function updateHitFreeze(_scene: Phaser.Scene): boolean {
   if (freezeFrames > 0) {
     freezeFrames--;
-    if (freezeFrames <= 0) {
-      scene.physics.world.isPaused = false;
-    }
     return true;
   }
   return false;
+}
+
+/** Returns true if a hit freeze is currently active */
+export function isHitFrozen(): boolean {
+  return freezeFrames > 0;
 }
 
 /**
  * Trigger slow motion for match point or special moves.
  */
 export function triggerSlowMo(scene: Phaser.Scene, scale: number = SLOW_MO_SCALE, duration: number = SLOW_MO_DURATION): void {
-  scene.physics.world.timeScale = 1 / scale; // inverse for physics world
   scene.time.timeScale = scale;
   originalTimeScale = scale;
   slowMoTimer = duration;
@@ -68,7 +71,6 @@ export function updateSlowMo(scene: Phaser.Scene, realDeltaMs: number): void {
   if (slowMoTimer > 0) {
     slowMoTimer -= realDeltaMs;
     if (slowMoTimer <= 0) {
-      scene.physics.world.timeScale = 1;
       scene.time.timeScale = 1;
       slowMoTimer = 0;
     }

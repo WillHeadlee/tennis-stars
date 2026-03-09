@@ -102,26 +102,30 @@ export class CharSelectScene extends Phaser.Scene {
       slotBg.strokeRect(sx, y, 60, 90);
       slotBg.setDepth(5);
 
-      // Character portrait image — centered in the top portion of the slot
-      const img = this.add.image(sx + 30, y + 28, `${charId}-nobg`);
-      img.setDisplaySize(54, 54);
+      // Character portrait image — smaller to leave room for text below
+      const img = this.add.image(sx + 30, y + 24, `${charId}-nobg`);
+      img.setDisplaySize(44, 44);
       img.setDepth(6);
       this.charPreviewImages.push(img);
 
       // Character name
-      const nameText = this.add.text(sx + 30, y + 60, char.name, {
+      const nameText = this.add.text(sx + 30, y + 49, char.name, {
         fontFamily: '"Press Start 2P", monospace',
-        fontSize: '5px',
+        fontSize: '6px',
         color: `#${char.color.toString(16).padStart(6, '0')}`,
+        stroke: '#000000',
+        strokeThickness: 2,
       }).setResolution(4);
       nameText.setOrigin(0.5, 0);
       nameText.setDepth(7);
 
       // Stats
-      const statsText = this.add.text(sx + 2, y + 70, this.buildStatsString(charId), {
+      const statsText = this.add.text(sx + 3, y + 60, this.buildStatsString(charId), {
         fontFamily: '"Press Start 2P", monospace',
         fontSize: '5px',
-        color: '#aaaaaa',
+        color: '#cccccc',
+        stroke: '#000000',
+        strokeThickness: 1,
       }).setResolution(4);
       statsText.setDepth(7);
       this.charInfoTexts.push(statsText);

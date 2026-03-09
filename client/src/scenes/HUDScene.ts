@@ -77,18 +77,18 @@ export class HUDScene extends Phaser.Scene {
     bg.lineBetween(0, 22, 320, 22);
 
     // Stamina bar labels
-    const p1Label = this.add.text(4, 14, 'STM', {
+    const p1Label = this.add.text(4, 13, 'STM', {
       fontFamily: '"Press Start 2P", monospace',
-      fontSize: '4px',
+      fontSize: '5px',
       color: `#${CHARACTERS[this.p1CharId].color.toString(16).padStart(6, '0')}`,
-    });
+    }).setResolution(4);
     p1Label.setDepth(10);
 
-    const p2Label = this.add.text(316, 14, 'STM', {
+    const p2Label = this.add.text(316, 13, 'STM', {
       fontFamily: '"Press Start 2P", monospace',
-      fontSize: '4px',
+      fontSize: '5px',
       color: `#${CHARACTERS[this.p2CharId].color.toString(16).padStart(6, '0')}`,
-    });
+    }).setResolution(4);
     p2Label.setOrigin(1, 0);
     p2Label.setDepth(10);
   }
@@ -109,31 +109,31 @@ export class HUDScene extends Phaser.Scene {
 
   private createScoreDisplay(): void {
     // Score in the center
-    this.scoreText = this.add.text(160, 4, '0 - 0', {
+    this.scoreText = this.add.text(160, 3, '0 - 0', {
       fontFamily: '"Press Start 2P", monospace',
       fontSize: '8px',
       color: '#ffffff',
       stroke: '#000000',
       strokeThickness: 2,
-    });
+    }).setResolution(4);
     this.scoreText.setOrigin(0.5, 0);
     this.scoreText.setDepth(10);
 
     // Games (smaller, below score)
-    this.gamesText = this.add.text(160, 14, '0 - 0', {
+    this.gamesText = this.add.text(160, 13, '0 - 0', {
       fontFamily: '"Press Start 2P", monospace',
       fontSize: '5px',
       color: '#aaaaff',
-    });
+    }).setResolution(4);
     this.gamesText.setOrigin(0.5, 0);
     this.gamesText.setDepth(10);
 
     // Sets (even smaller)
-    this.setsText = this.add.text(160, 2, '0 | 0', {
+    this.setsText = this.add.text(160, 1, '0 | 0', {
       fontFamily: '"Press Start 2P", monospace',
-      fontSize: '4px',
-      color: '#888888',
-    });
+      fontSize: '5px',
+      color: '#999999',
+    }).setResolution(4);
     this.setsText.setOrigin(0.5, 0);
     this.setsText.setVisible(false);
     this.setsText.setDepth(10);
@@ -141,9 +141,9 @@ export class HUDScene extends Phaser.Scene {
     // Tiebreak text
     this.tiebreakText = this.add.text(160, 22, '', {
       fontFamily: '"Press Start 2P", monospace',
-      fontSize: '4px',
+      fontSize: '5px',
       color: '#ff8800',
-    });
+    }).setResolution(4);
     this.tiebreakText.setOrigin(0.5, 0);
     this.tiebreakText.setDepth(10);
 

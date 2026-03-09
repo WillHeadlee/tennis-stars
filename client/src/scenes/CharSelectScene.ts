@@ -70,7 +70,7 @@ export class CharSelectScene extends Phaser.Scene {
       color: '#ffffff',
       stroke: '#000000',
       strokeThickness: 2,
-    });
+    }).setResolution(4);
     title.setOrigin(0.5, 0);
     title.setDepth(10);
 
@@ -113,16 +113,16 @@ export class CharSelectScene extends Phaser.Scene {
         fontFamily: '"Press Start 2P", monospace',
         fontSize: '5px',
         color: `#${char.color.toString(16).padStart(6, '0')}`,
-      });
+      }).setResolution(4);
       nameText.setOrigin(0.5, 0);
       nameText.setDepth(7);
 
       // Stats
       const statsText = this.add.text(sx + 2, y + 70, this.buildStatsString(charId), {
         fontFamily: '"Press Start 2P", monospace',
-        fontSize: '4px',
-        color: '#888888',
-      });
+        fontSize: '5px',
+        color: '#aaaaaa',
+      }).setResolution(4);
       statsText.setDepth(7);
       this.charInfoTexts.push(statsText);
     }
@@ -148,14 +148,14 @@ export class CharSelectScene extends Phaser.Scene {
       fontFamily: '"Press Start 2P", monospace',
       fontSize: '6px',
       color: '#ffff00',
-    }).setOrigin(0.5, 0).setDepth(10);
+    }).setResolution(4).setOrigin(0.5, 0).setDepth(10);
 
     const court = COURTS[COURT_ORDER[this.courtIndex]];
     const courtNameText = this.add.text(160, y + 12, court.name, {
       fontFamily: '"Press Start 2P", monospace',
-      fontSize: '5px',
+      fontSize: '6px',
       color: '#ffffff',
-    });
+    }).setResolution(4);
     courtNameText.setName('court_name');
     courtNameText.setOrigin(0.5, 0);
     courtNameText.setDepth(10);
@@ -165,7 +165,7 @@ export class CharSelectScene extends Phaser.Scene {
       fontFamily: '"Press Start 2P", monospace',
       fontSize: '8px',
       color: '#29adff',
-    }).setDepth(10);
+    }).setResolution(4).setDepth(10);
     leftArrow.setInteractive({ useHandCursor: true });
     leftArrow.on('pointerdown', () => this.changeCourt(-1));
 
@@ -173,7 +173,7 @@ export class CharSelectScene extends Phaser.Scene {
       fontFamily: '"Press Start 2P", monospace',
       fontSize: '8px',
       color: '#29adff',
-    }).setDepth(10);
+    }).setResolution(4).setDepth(10);
     rightArrow.setInteractive({ useHandCursor: true });
     rightArrow.on('pointerdown', () => this.changeCourt(1));
   }
@@ -184,7 +184,7 @@ export class CharSelectScene extends Phaser.Scene {
       fontFamily: '"Press Start 2P", monospace',
       fontSize: '6px',
       color: '#ff8800',
-    }).setOrigin(0.5, 0).setDepth(10);
+    }).setResolution(4).setOrigin(0.5, 0).setDepth(10);
 
     const diffColors: Record<string, string> = {
       easy: '#00ff00',
@@ -196,7 +196,7 @@ export class CharSelectScene extends Phaser.Scene {
       fontFamily: '"Press Start 2P", monospace',
       fontSize: '6px',
       color: diffColors[this.difficulties[this.difficultyIndex]],
-    });
+    }).setResolution(4);
     diffText.setName('diff_text');
     diffText.setOrigin(0.5, 0);
     diffText.setDepth(10);
@@ -208,15 +208,15 @@ export class CharSelectScene extends Phaser.Scene {
     if (isLocal) {
       this.add.text(160, 170, 'P1: A/D+J  P2: ←/→+NUM1  ENTER: CONFIRM', {
         fontFamily: '"Press Start 2P", monospace',
-        fontSize: '4px',
-        color: '#444466',
-      }).setOrigin(0.5, 0.5).setDepth(10);
+        fontSize: '5px',
+        color: '#6666aa',
+      }).setResolution(4).setOrigin(0.5, 0.5).setDepth(10);
     } else {
       this.add.text(160, 170, 'A/D: SELECT   ENTER: CONFIRM   ESC: BACK', {
         fontFamily: '"Press Start 2P", monospace',
-        fontSize: '4px',
-        color: '#444466',
-      }).setOrigin(0.5, 0.5).setDepth(10);
+        fontSize: '5px',
+        color: '#6666aa',
+      }).setResolution(4).setOrigin(0.5, 0.5).setDepth(10);
     }
   }
 

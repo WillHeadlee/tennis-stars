@@ -96,15 +96,15 @@ export class MenuScene extends Phaser.Scene {
       color: '#ffffff',
       stroke: '#000066',
       strokeThickness: 2,
-    });
+    }).setResolution(4);
     title.setOrigin(0.5, 0.5);
     title.setDepth(10);
 
     const subtitle = this.add.text(0, 18, 'ARCADE EDITION', {
       fontFamily: '"Press Start 2P", monospace',
-      fontSize: '5px',
+      fontSize: '6px',
       color: '#ffff00',
-    });
+    }).setResolution(4);
     subtitle.setOrigin(0.5, 0.5);
     subtitle.setDepth(10);
 
@@ -143,7 +143,7 @@ export class MenuScene extends Phaser.Scene {
         fontFamily: '"Press Start 2P", monospace',
         fontSize: '7px',
         color: i === 0 ? '#ffffff' : '#888888',
-      });
+      }).setResolution(4);
       item.setOrigin(0, 0.5);
       item.setDepth(10);
       this.menuItems.push(item);
@@ -152,9 +152,9 @@ export class MenuScene extends Phaser.Scene {
     // Controls hint
     this.add.text(160, 165, 'UP/DOWN: SELECT   SPACE/ENTER: CONFIRM', {
       fontFamily: '"Press Start 2P", monospace',
-      fontSize: '4px',
-      color: '#555555',
-    }).setOrigin(0.5, 0.5).setDepth(10);
+      fontSize: '5px',
+      color: '#777777',
+    }).setResolution(4).setOrigin(0.5, 0.5).setDepth(10);
   }
 
   private drawCursor(): void {
@@ -202,9 +202,9 @@ export class MenuScene extends Phaser.Scene {
   private drawVersion(): void {
     this.add.text(2, 174, 'v1.0', {
       fontFamily: '"Press Start 2P", monospace',
-      fontSize: '4px',
-      color: '#333333',
-    }).setDepth(10);
+      fontSize: '5px',
+      color: '#444444',
+    }).setResolution(4).setDepth(10);
   }
 
   private setupInput(): void {

@@ -111,7 +111,7 @@ export class ResultScene extends Phaser.Scene {
       color: `#${winnerChar.color.toString(16).padStart(6, '0')}`,
       stroke: '#000000',
       strokeThickness: 3,
-    });
+    }).setResolution(4);
     winnerText.setOrigin(0.5, 0);
     winnerText.setDepth(7);
 
@@ -131,7 +131,7 @@ export class ResultScene extends Phaser.Scene {
       fontFamily: '"Press Start 2P", monospace',
       fontSize: '7px',
       color: '#ffffff',
-    });
+    }).setResolution(4);
     playerLabel.setOrigin(0.5, 0);
     playerLabel.setDepth(7);
 
@@ -140,7 +140,7 @@ export class ResultScene extends Phaser.Scene {
       fontFamily: '"Press Start 2P", monospace',
       fontSize: '6px',
       color: `#${winnerChar.color.toString(16).padStart(6, '0')}`,
-    });
+    }).setResolution(4);
     charName.setOrigin(0.5, 0);
     charName.setDepth(7);
   }
@@ -206,16 +206,16 @@ export class ResultScene extends Phaser.Scene {
       fontFamily: '"Press Start 2P", monospace',
       fontSize: '7px',
       color: '#ffffff',
-    });
+    }).setResolution(4);
     finalScore.setOrigin(0.5, 0);
     finalScore.setDepth(6);
 
     // Total points
     const points = this.add.text(160, 148, `PTS: ${score.p1TotalPoints} - ${score.p2TotalPoints}`, {
       fontFamily: '"Press Start 2P", monospace',
-      fontSize: '5px',
-      color: '#888888',
-    });
+      fontSize: '6px',
+      color: '#aaaaaa',
+    }).setResolution(4);
     points.setOrigin(0.5, 0);
     points.setDepth(6);
 
@@ -223,9 +223,9 @@ export class ResultScene extends Phaser.Scene {
     if (data.mode === 'online' && (data.p1ELODelta !== undefined)) {
       const eloText = this.add.text(160, 158, `ELO: ${data.p1ELODelta! >= 0 ? '+' : ''}${data.p1ELODelta}`, {
         fontFamily: '"Press Start 2P", monospace',
-        fontSize: '5px',
+        fontSize: '6px',
         color: data.p1ELODelta! >= 0 ? '#00ff00' : '#ff4444',
-      });
+      }).setResolution(4);
       eloText.setOrigin(0.5, 0);
       eloText.setDepth(6);
     }
@@ -246,7 +246,7 @@ export class ResultScene extends Phaser.Scene {
       fontFamily: '"Press Start 2P", monospace',
       fontSize: '5px',
       color: '#29adff',
-    });
+    }).setResolution(4);
     rematchText.setOrigin(0.5, 0.5);
     rematchText.setDepth(6);
 
@@ -264,7 +264,7 @@ export class ResultScene extends Phaser.Scene {
       fontFamily: '"Press Start 2P", monospace',
       fontSize: '5px',
       color: '#aaaaaa',
-    });
+    }).setResolution(4);
     menuText.setOrigin(0.5, 0.5);
     menuText.setDepth(6);
 

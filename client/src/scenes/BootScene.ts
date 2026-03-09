@@ -60,14 +60,14 @@ export class BootScene extends Phaser.Scene {
       color: '#ffffff',
       stroke: '#000000',
       strokeThickness: 2,
-    });
+    }).setResolution(4);
     titleText.setOrigin(0.5, 0.5);
 
     const subText = this.add.text(w / 2, 92, 'ARCADE EDITION', {
       fontFamily: '"Press Start 2P", monospace',
       fontSize: '6px',
       color: '#ffff00',
-    });
+    }).setResolution(4);
     subText.setOrigin(0.5, 0.5);
 
     // Loading bar background
@@ -86,7 +86,7 @@ export class BootScene extends Phaser.Scene {
       fontFamily: '"Press Start 2P", monospace',
       fontSize: '6px',
       color: '#aaaaaa',
-    });
+    }).setResolution(4);
     this.loadingText.setOrigin(0.5, 0.5);
 
     // Pixel decoration — tennis ball

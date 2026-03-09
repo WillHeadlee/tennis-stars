@@ -15,7 +15,7 @@ import {
   TIMING_GOOD,
 } from '@shared/constants';
 import { CharacterId, AnimState, ShotType, TimingQuality } from '@shared/types';
-import { CHARACTERS, drawCharacterSprite } from '../data/characters';
+import { CHARACTERS } from '../data/characters';
 
 export interface SwingResult {
   hit: boolean;
@@ -43,6 +43,8 @@ export class Player {
   public animState: AnimState = 'idle';
   public animFrame: number = 0;
   private animTimer: number = 0;
+
+  private bodyImage!: Phaser.GameObjects.Image;
 
   public isSwinging: boolean = false;
   private swingTimer: number = 0;
@@ -91,8 +93,13 @@ export class Player {
     this.shadowGraphics = scene.add.graphics();
     this.shadowGraphics.setDepth(4);
 
+    this.bodyImage = scene.add.image(x, y, `${characterId}-nobg`);
+    this.bodyImage.setOrigin(0.5, 1); // anchor at bottom-center (feet)
+    this.bodyImage.setDisplaySize(20, 30);
+    this.bodyImage.setDepth(5 + (isP2 ? 1 : 0));
+
     this.graphics = scene.add.graphics();
-    this.graphics.setDepth(5 + (isP2 ? 1 : 0));
+    this.graphics.setDepth(6 + (isP2 ? 1 : 0)); // effects draw above sprite
   }
 
   get speedMult(): number {
@@ -401,42 +408,32 @@ export class Player {
     this.shadowGraphics.fillStyle(0x000000, 0.3);
     this.shadowGraphics.fillEllipse(this.x, COURT_FLOOR + 2, 18, 4);
 
-    // Draw character
+    // Sprite position and flip
+    this.bodyImage.setPosition(this.x, this.y);
+    this.bodyImage.setFlipX(!this.facingRight);
+
+    // Jump bob
+    const jumpOffset = !this.isGrounded ? -3 : 0;
+    this.bodyImage.setY(this.y + jumpOffset);
+
+    // Effects (charge glow, passive, hurt flash)
     this.graphics.clear();
 
-    // Apply flip for facing direction
-    const scaleX = this.facingRight ? 1 : -1;
-    this.graphics.setScale(scaleX, 1);
-    this.graphics.setPosition(this.x * scaleX, this.y);
-
-    // Draw character using the data module
-    drawCharacterSprite(this.graphics, this.characterId, this.animFrame, this.facingRight, this.isGrounded);
-
-    // Reset position for accurate hit detection rendering
-    this.graphics.setScale(1, 1);
-    this.graphics.setPosition(0, 0);
-
-    // Re-draw at correct position with flip
-    drawCharacterAtPosition(this.graphics, this.characterId, this.animFrame, this.facingRight, this.isGrounded, this.x, this.y, this.animState);
-
-    // Charge glow
     if (this.isCharging) {
       const glowAlpha = Math.min(1, this.chargeTimer / 1.0) * 0.7;
       this.graphics.lineStyle(2, char.color, glowAlpha);
-      this.graphics.strokeCircle(this.x, this.y - 8, 10 + this.chargeTimer * 5);
+      this.graphics.strokeCircle(this.x, this.y - 15, 10 + this.chargeTimer * 5);
     }
 
-    // Rally passive glow (green ball aura)
     if (this.rallyPassiveActive) {
       this.graphics.lineStyle(1, 0x00ff00, 0.5);
-      this.graphics.strokeCircle(this.x, this.y - 8, 14);
+      this.graphics.strokeCircle(this.x, this.y - 15, 14);
     }
 
-    // Hurt flash
     if (this.hurtTimer > 0) {
-      const flashAlpha = Math.sin(this.hurtTimer * 20) > 0 ? 0.5 : 0;
+      const flashAlpha = Math.sin(this.hurtTimer * 20) > 0 ? 0.4 : 0;
       this.graphics.fillStyle(0xff0000, flashAlpha);
-      this.graphics.fillRect(this.x - 8, this.y - 24, 16, 24);
+      this.graphics.fillRect(this.x - 10, this.y - 30, 20, 30);
     }
   }
 
@@ -449,116 +446,9 @@ export class Player {
   }
 
   destroy(): void {
+    this.bodyImage.destroy();
     this.graphics.destroy();
     this.shadowGraphics.destroy();
   }
 }
 
-/**
- * Standalone draw function that positions the character correctly with flip.
- */
-function drawCharacterAtPosition(
-  gfx: Phaser.GameObjects.Graphics,
-  characterId: CharacterId,
-  animFrame: number,
-  facingRight: boolean,
-  isGrounded: boolean,
-  worldX: number,
-  worldY: number,
-  animState: AnimState
-): void {
-  const char = CHARACTERS[characterId];
-  const primary = char.color;
-  const accent = char.accentColor;
-  const outline = 0x000000;
-
-  const bobY = isGrounded ? Math.sin(animFrame * 0.3) * 0.5 : 0;
-
-  // Jump offset
-  const jumpOffset = animState === 'jump' ? -4 : 0;
-  // Swing lean
-  const swingLean = animState === 'swing' ? (facingRight ? 3 : -3) : 0;
-
-  const px = worldX + swingLean;
-  const py = worldY + bobY + jumpOffset;
-
-  // Flip x coordinates
-  const fx = (x: number) => facingRight ? px + x : px - x;
-
-  // Outline background
-  gfx.fillStyle(outline, 1);
-
-  // Body
-  gfx.fillStyle(primary, 1);
-  gfx.fillRect(fx(-6), py - 22, 12, 22);
-
-  // Head
-  gfx.fillStyle(0xffd700, 1);
-  gfx.fillRect(fx(-4), py - 28, 8, 7);
-
-  // Character-specific accents
-  switch (characterId) {
-    case 'ace':
-      // Hair
-      gfx.fillStyle(0x1d2b53, 1);
-      gfx.fillRect(fx(-4), py - 31, 8, 4);
-      // Racket
-      gfx.fillStyle(0xffcc00, 1);
-      gfx.fillRect(fx(5), py - 26, 2, 10);
-      // Stripes
-      gfx.fillStyle(accent, 1);
-      gfx.fillRect(fx(-6), py - 18, 2, 10);
-      gfx.fillRect(fx(4), py - 18, 2, 10);
-      break;
-
-    case 'crusher':
-      // Headband
-      gfx.fillStyle(0xffffff, 1);
-      gfx.fillRect(fx(-4), py - 26, 8, 2);
-      // Oversized racket
-      gfx.fillStyle(0x888888, 1);
-      gfx.fillRect(fx(6), py - 28, 4, 14);
-      gfx.fillStyle(0xdddddd, 1);
-      gfx.fillRect(fx(6), py - 28, 3, 12);
-      break;
-
-    case 'phantom':
-      // Cloak
-      gfx.fillStyle(0x3b1f5c, 1);
-      gfx.fillRect(fx(-7), py - 18, 4, 10);
-      gfx.fillRect(fx(3), py - 18, 4, 10);
-      // Visor mask
-      gfx.fillStyle(primary, 1);
-      gfx.fillRect(fx(-4), py - 27, 8, 2);
-      // Long racket
-      gfx.fillStyle(0x5f574f, 1);
-      gfx.fillRect(fx(5), py - 30, 2, 16);
-      break;
-
-    case 'rally':
-      // Polo collar
-      gfx.fillStyle(accent, 1);
-      gfx.fillRect(fx(-2), py - 20, 4, 3);
-      // Sweatband
-      gfx.fillStyle(accent, 1);
-      gfx.fillRect(fx(-4), py - 26, 8, 2);
-      // Round racket
-      gfx.fillStyle(0x8b4513, 1);
-      gfx.fillRect(fx(5), py - 17, 2, 8);
-      gfx.fillStyle(0xc8a000, 1);
-      gfx.fillRect(fx(4), py - 26, 4, 10);
-      break;
-  }
-
-  // Legs with walk animation
-  const legOff = isGrounded ? Math.sin(animFrame * 0.5) * 2 : 0;
-  const legColor = primary;
-  gfx.fillStyle(legColor, 1);
-  gfx.fillRect(fx(-5), py - 8, 4, 8 + legOff);
-  gfx.fillRect(fx(1), py - 8, 4, 8 - legOff);
-
-  // Shoes
-  gfx.fillStyle(animState === 'celebrate' ? 0xffff00 : 0x222222, 1);
-  gfx.fillRect(fx(-6), py - 1 + legOff, 5, 3);
-  gfx.fillRect(fx(1), py - 1 - legOff, 5, 3);
-}

@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { BALL_RADIUS, COURT_FLOOR, BOUNCE_Y, BOUNCE_X, NET_X, NET_Y, NET_HEIGHT, BALL_OUT_LEFT, BALL_OUT_RIGHT, POWER_TRAIL_LENGTH, BALL_TRAIL_LENGTH } from '@shared/constants';
+import { BALL_RADIUS, COURT_FLOOR, BOUNCE_Y, BOUNCE_X, NET_X, NET_Y, NET_HEIGHT, BALL_OUT_LEFT, BALL_OUT_RIGHT, POWER_TRAIL_LENGTH, BALL_TRAIL_LENGTH, BALL_GRAVITY } from '@shared/constants';
 import { ShotType } from '@shared/types';
 import { createDustBurst, createNetRipple } from '../utils/effects';
 
@@ -70,8 +70,8 @@ export class Ball {
     this.lastBounceBy = '';
     this.shotType = 'flat';
     const dir = fromRight ? -1 : 1;
-    this.vx = 60 * dir;
-    this.vy = -200;
+    this.vx = 100 * dir;
+    this.vy = -280;
     this.trail = [];
   }
 
@@ -79,7 +79,7 @@ export class Ball {
     if (!this.inPlay) return 'none';
 
     // Apply gravity
-    this.vy += 1200 * dt;
+    this.vy += BALL_GRAVITY * dt;
 
     // Move
     this.x += this.vx * dt;

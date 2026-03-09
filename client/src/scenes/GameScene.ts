@@ -3,7 +3,7 @@ import { CharacterId, CourtId, GameMode, AIDifficulty, AIState } from '@shared/t
 import {
   NET_X, NET_Y, COURT_FLOOR, P1_MIN_X, P1_MAX_X, P2_MIN_X, P2_MAX_X,
   SERVE_HEIGHT, SERVE_RESET_DELAY, AI_DELAY_EASY, AI_DELAY_MEDIUM, AI_DELAY_HARD,
-  AI_SIGNATURE_STAMINA_HARD, AI_POWER_STAMINA_MEDIUM,
+  AI_SIGNATURE_STAMINA_HARD, AI_POWER_STAMINA_MEDIUM, BALL_GRAVITY,
 } from '@shared/constants';
 import { Ball } from '../entities/Ball';
 import { Player } from '../entities/Player';
@@ -638,7 +638,7 @@ export class GameScene extends Phaser.Scene {
     const dt = 1 / 60;
     let iter = 0;
     while (x > 0 && x < 320 && iter < 600) {
-      vy += 1200 * dt;
+      vy += BALL_GRAVITY * dt;
       x += vx * dt;
       y += vy * dt;
       iter++;
@@ -766,7 +766,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private updatePhantomBall(dt: number): void {
-    this.phantomBallVy += 1200 * dt;
+    this.phantomBallVy += BALL_GRAVITY * dt;
     this.phantomBallX += this.phantomBallVx * dt;
     this.phantomBallY += this.phantomBallVy * dt;
 

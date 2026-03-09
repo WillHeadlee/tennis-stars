@@ -209,25 +209,25 @@ export class Player {
         // Auto-upgrade to power shot on perfect timing
         finalShotType = 'power';
         const dir = targetRight ? 1 : -1;
-        vx = 320 * dir * this.powerMult;
-        vy = movementDir === dir ? -60 : -100;
+        vx = 250 * dir * this.powerMult;
+        vy = movementDir === dir ? -180 : -200;
         this.stamina = Math.max(0, this.stamina - STAMINA_POWER_COST);
       } else {
         finalShotType = 'flat';
         const dir = targetRight ? 1 : -1;
-        let speed = quality === 'mishit' ? 100 : 220;
+        let speed = quality === 'mishit' ? 100 : 200;
         speed *= this.powerMult;
         vx = speed * dir;
 
         if (movementDir === dir) {
           // Running toward net = deep shot
-          vy = -80;
+          vy = -180;
         } else if (movementDir === -dir) {
           // Running away = drop shot
           vx = vx * 0.4;
-          vy = -200;
+          vy = -280;
         } else {
-          vy = -120 + (quality === 'mishit' ? (Math.random() - 0.5) * 60 : 0);
+          vy = -220 + (quality === 'mishit' ? (Math.random() - 0.5) * 60 : 0);
         }
       }
     } else if (shotType === 'lob') {
@@ -236,12 +236,12 @@ export class Player {
 
       if (finalShotType === 'lob') {
         this.stamina = Math.max(0, this.stamina - STAMINA_LOB_COST);
-        vx = 80 * dir;
-        vy = -280;
+        vx = 100 * dir;
+        vy = -300;
       } else {
         // No stamina — flat fallback
         vx = 180 * dir;
-        vy = -120;
+        vy = -220;
       }
     } else if (shotType === 'signature') {
       if (this.canUseSignature()) {
@@ -254,21 +254,21 @@ export class Player {
         const dir = targetRight ? 1 : -1;
         switch (this.characterId) {
           case 'ace':
-            vx = 320 * 2.5 * dir;
-            vy = -80;
+            vx = 260 * dir;
+            vy = -200;
             break;
           case 'crusher':
-            vx = 180 * dir;
-            vy = -400; // Meteor — goes up then comes down
+            vx = 80 * dir;
+            vy = -450; // Meteor — goes up then comes down
             break;
           case 'phantom':
-            vx = 240 * dir;
-            vy = -140;
+            vx = 220 * dir;
+            vy = -230;
             break;
           case 'rally':
             // Rally passive — doesn't change shot velocity, enables perfect returns
-            vx = 220 * dir;
-            vy = -110;
+            vx = 200 * dir;
+            vy = -220;
             this.rallyPassiveActive = true;
             this.rallyPassiveTimer = 5.0;
             break;
@@ -282,8 +282,8 @@ export class Player {
     // Rally passive: auto-optimize shot direction
     if (this.rallyPassiveActive) {
       const dir = targetRight ? 1 : -1;
-      vx = 220 * dir * this.powerMult;
-      vy = -130;
+      vx = 200 * dir * this.powerMult;
+      vy = -220;
       finalShotType = 'power';
     }
 
